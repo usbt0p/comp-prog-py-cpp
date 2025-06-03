@@ -1,7 +1,13 @@
+#https://aceptaelreto.com/problem/statement.php?id=437
+
 from sys import stdin
 
 n_cases = int(stdin.readline()[:-1])
 
+'''
+Convert to seconds and then de-convert to datetime
+with some integer arithmetic.
+'''
 
 for _ in range(n_cases):
     h, m, s = map(int, stdin.readline().strip().split(":"))

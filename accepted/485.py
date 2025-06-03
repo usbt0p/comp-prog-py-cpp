@@ -4,7 +4,13 @@
 while int(input()): print(*[sum(E[e:]) for e in range(len(E))]) if (E := [*map(int, input().split())]) else _
 
 
-# Soluciçón legible:
+# Legible solution:
+'''
+We just have to calculate the total sum of 
+the remaining (right hand side) stages from the current one, 
+and add those to a list.
+'''
+
 '''
 n_etapas = int(input())
 
