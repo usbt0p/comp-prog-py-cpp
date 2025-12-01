@@ -1,7 +1,8 @@
 #https://adventofcode.com/2025/day/1
 import sys
 
-with open(sys.argv[1], 'r', encoding='utf-8') as f:
+inp = "aoc1input2.txt" #sys.argv[1]
+with open(inp, 'r', encoding='utf-8') as f:
     moves = f.read().split("\n")
 
 # Part 1
@@ -31,24 +32,24 @@ def count_any_zeroes(moves):
 
         if side == "L":
             new = ((start - amount) + 100) % 100 # wrap around 99 to 0
-            
-            div, mod = divmod(start, 100)
+            # integer division counts the number of full circles
+            div, mod = divmod(amount, 100)
             c += div
-
-            if new > start: c+= 1
+            # if the moving mod towards the left when not in 0 leaves us lower, it's a pass 
+            if start - mod < 0 and start != 0: c += 1
 
         elif side == "R":
             new = ((start + amount) - 100) % 100
             
-            # integer division counts the number of full circles
-            div, mod = divmod(start, 100)
+            div, mod = divmod(amount, 100)
             c += div
-            # if the end is lower than the start another pass over 0
-            if new < start: c += 1
+            # same logic as above but for the right
+            if start + mod > 100 and start != 0: c += 1
 
-        #if new == 0: c += 1
+        if new == 0: c += 1
         start = new
     
     return c
 
-print("The real key is: ", count_any_zeroes(moves))
+res = count_any_zeroes(moves)
+print("The real key is: ", res)
