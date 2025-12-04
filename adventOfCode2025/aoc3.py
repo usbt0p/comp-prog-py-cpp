@@ -44,32 +44,34 @@ def find_highest_joltages(banks):
 #     t += t2 - t1
 # print(f"avg time over {n} runs:", t/n)
 
-res = find_highest_joltages(banks)
-print("The higest joltages are:", res)
-print("The sum is:", sum(res))
+# res = find_highest_joltages(banks)
+# print("The higest joltages are:", res)
+# print("The sum is:", sum(res))
 
 
 # Parte 2
-
-def argmin(x):
-    return min(range(len(x)), key=x.__getitem__)
 
 def find_highest_12_joltages(banks):
     results = []
     for bank in banks:
         # the initial number: start with the 12 last digits from the back
-        init_num : list= bank[-12:]
+        init_num : list = bank[-12:]
         msd = init_num[0] # most significant digit
-        
+
         for num in bank[:-12][::-1]: # for each number in (bank[:-12]) from the back to the front
             # search for a number higher or equal than the init_number's first digit
             if num >= msd:
-                # if found, remove the init_number's first lowest 
-                # digit and add to the front the newfound number
-                # FIXME the problem is here! not the lowest one, but the most-significant lowest one with 
-                lowest_n = min(init_num) 
-                init_num.remove(lowest_n)
-                init_num.insert(0, num)
+                # if found, add to the front the newfound number. we must also remove one
+                # so, we can check all the combinations by removing the nums from the init_bank, and picking the highest
+                # for example, for 9180 -> {9(80), 9(10), 9(18)}
+                all_options = []
+                for idx in range(len(init_num)):
+                    remove_one = init_num[:idx] + init_num[idx+1:]
+                    to_int = int("".join([str(i) for i in remove_one]))
+                    all_options.append(to_int)
+
+                # and now we add our new digit to the best option
+                init_num = [num]+ list(str(max(all_options)))
                 msd = num
 
         res = int("".join([str(i) for i in init_num]))
@@ -79,7 +81,6 @@ def find_highest_12_joltages(banks):
 res = find_highest_12_joltages(banks)
 print("The higest joltages are:", res)
 print("The sum is:", sum(res))
-#assert sum(res) == 3121910778619
 
 
 
