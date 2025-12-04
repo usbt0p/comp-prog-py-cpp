@@ -82,7 +82,39 @@ res = find_highest_12_joltages(banks)
 print("The higest joltages are:", res)
 print("The sum is:", sum(res))
 
+###### Well-done part 2
 
+# after completing the part 2 without "spoilers" (not looking up algos / problem types / AI),
+# i looked for the problem family, which seems to be Lexicographical Maximization.
+# monotonic stack is the optimal algo for solving such problems, (would aldo work for the first part)
+# which is O(2N) compared to my approach O(N*K) with K = 12
 
+def solve_monotonic_stack(bank, target_length=12):
+    # calculate how many digits we are allowed to 'drop'
+    # this is the kwy of the algo
+    drop_budget = len(bank) - target_length
+    
+    stack = []
+    
+    for digit in bank:
+        # while the stack is not empty
+        # AND the last digit we picked is SMALLER than the current digit
+        # AND we still have budget to drop numbers...
+        while stack and drop_budget > 0 and stack[-1] < digit:
+            stack.pop()      # Remove the small number
+            drop_budget -= 1 # We used a "drop" credit
+            
+        stack.append(digit)
+    
+    # If we still have drops left e.g., the input was "987", 
+    # we just trim from the end to meet the target length
+    return stack[:target_length]
 
+total = 0
+for bank in banks:
+    total += int("".join([
+        str(i) for i in solve_monotonic_stack(bank)
+        ]))
+
+print("monotonic stack solution:", total)
     
