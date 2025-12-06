@@ -1,7 +1,8 @@
 #https://adventofcode.com/2025/day/4
 import sys
 
-inp = sys.argv[1] 
+
+inp = f"aoc4input{sys.argv[1]}.txt"
 with open(inp, 'r', encoding='utf-8') as f:
     map = [line.strip() for line in f.readlines()]
 
@@ -27,18 +28,58 @@ map = add_padding(map, PAD)
 
 # now to index the eight adjacent squares and sum them
 def kernel(h, w, map):
-    ker = [map[h-1][w-1], map[h-1][w], map[h-1][w+1],
-                  map[h][w-1], 0, map[h][w+1], # note the 0 in the middle
-                  map[h+1][w-1], map[h+1][w], map[h+1][w+1]]
+    ker = [ map[h-1][w-1], map[h-1][w], map[h-1][w+1],
+            map[h][w-1],                map[h][w+1], # note the empty middle
+            map[h+1][w-1], map[h+1][w], map[h+1][w+1]]
     return sum(ker)
 
-# get virtual indexes
-idxs = [(i+PAD, j+PAD) for j in range(m_w) for i in range(m_h)]
-n_acc = 0
 
-for idx in idxs:
-    h, w = idx
-    if map[h][w] == 1 and kernel(h, w, map) < 4:
+def get_access_rolls(map, area):
+    n_acc = 0       
+    for idx in range(area):
+        # get virtual indexes (where the coords would be if not for the padding)
+        h, w = (idx//m_w)+PAD, (idx%m_h)+PAD 
+        if map[h][w] == 1 and kernel(h, w, map) < 4:
             n_acc += 1 # then it's accessible
 
-print(n_acc)
+    return n_acc
+
+print(get_access_rolls(map, m_w*m_h))
+
+
+# part 2
+
+def get_removed_rolls(map, area):
+    remove_coords : list[tuple] = []      
+    
+    for idx in range(area):
+        # get virtual indexes (where the coords would be if not for the padding)
+        h, w = (idx//m_w)+PAD, (idx%m_h)+PAD 
+        if map[h][w] == 1 and kernel(h, w, map) < 4:
+            remove_coords.append((h, w))
+
+    return remove_coords
+
+# just for fun, dont use this with the big input lol
+def printmap(map):
+    for row in map:
+        for col in row:
+            if col: print("@", end="")
+            else: print(".", end="")
+        print()
+    print()
+
+total_removed = 0
+while (coords := get_removed_rolls(map, m_h*m_w)):
+    #printmap(map)
+    for coord in coords:
+        map[coord[0]][coord[1]] = 0
+    total_removed += len(coords)
+
+print(f"Removed a total of {total_removed} rolls")
+
+        
+
+
+     
+
